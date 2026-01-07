@@ -54,8 +54,8 @@ options:
     integrations_enabled: "mqtt"
     regions: |
       [[regions]]
-      name="eu868"
-      common_name="EU868"
+      name="us915_0"
+      common_name="us915"
     advanced_config: |
       # Additional ChirpStack configuration
       # Any TOML sections you want to add or override

@@ -140,26 +140,26 @@ tomlq -it \
 # Enable MQTT integration
 tomlq -it '.integration.enabled=["mqtt"]' /tmp/chirpstack.toml
 
-# Enable eu868 region
-tomlq -it '.network.enabled_regions=["eu868"]' /tmp/chirpstack.toml
+# Enable us915_0 region
+tomlq -it '.network.enabled_regions=["us915_0"]' /tmp/chirpstack.toml
 
 
 
 # ---------------------------------------------------------------------------
-# Regions - configured in separate eu868.toml file
+# Regions - configured in separate us915_0.toml file
 # ---------------------------------------------------------------------------
 
-# Create EU868 region configuration file  
-cat > /config/chirpstack/region_eu868.toml << 'EOF'
-# This file contains EU868 configuration.
+# Create us915_0 region configuration file  
+cat > /config/chirpstack/region_us915_0.toml << 'EOF'
+# This file contains us915_0 configuration.
 [[regions]]
 
   # Name is an user-defined identifier for this region.
-  name="eu868"
+  name="us915_0"
 
   # Common-name refers to the common-name of this region as defined by
   # the LoRa Alliance.
-  common_name="EU868"
+  common_name="us915_0"
 
 
   # Gateway configuration.
@@ -181,10 +181,10 @@ cat > /config/chirpstack/region_eu868.toml << 'EOF'
       [regions.gateway.backend.mqtt]
 
         # Event topic template.
-        event_topic="eu868/gateway/+/event/+"
+        event_topic="us915_0/gateway/+/event/+"
 
         # Command topic template.
-        command_topic="eu868/gateway/{{ gateway_id }}/command/{{ command }}"
+        command_topic="us915_0/gateway/{{ gateway_id }}/command/{{ command }}"
 
         # MQTT server (e.g. scheme://host:port where scheme is tcp, ssl or ws)
         server="tcp://localhost:1883"
@@ -428,17 +428,17 @@ EOF
 tomlq -it \
   --arg srv "$mqtt_server" \
   '.regions[0].gateway.backend.mqtt.server=$srv' \
-  /config/chirpstack/region_eu868.toml
+  /config/chirpstack/region_us915_0.toml
 
 tomlq -it \
   --arg un "$mqtt_username" \
   '.regions[0].gateway.backend.mqtt.username=$un' \
-  /config/chirpstack/region_eu868.toml
+  /config/chirpstack/region_us915_0.toml
 
 tomlq -it \
   --arg pw "$mqtt_password" \
   '.regions[0].gateway.backend.mqtt.password=$pw' \
-  /config/chirpstack/region_eu868.toml
+  /config/chirpstack/region_us915_0.toml
 
 # ---------------------------------------------------------------------------
 # SAVE FINAL CHIRPSTACK CONFIG
@@ -448,8 +448,8 @@ cp /tmp/chirpstack.toml /config/chirpstack/chirpstack.toml
 bashio::log.info "Generated chirpstack.toml:"
 cat /config/chirpstack/chirpstack.toml
 
-bashio::log.info "Generated region_eu868.toml:"
-cat /config/chirpstack/region_eu868.toml
+bashio::log.info "Generated region_us915_0.toml:"
+cat /config/chirpstack/region_us915_0.toml
 
 
 # ==============================================================================
@@ -460,10 +460,10 @@ if bashio::var.true "$basic_station_enabled" || bashio::var.true "$packet_forwar
 
     /usr/local/bin/chirpstack-gateway-bridge configfile > /tmp/chirpstack-gateway-bridge.toml
 
-    # Update topic templates to include eu868 prefix to match ChirpStack expectations
-    tomlq -it '.integration.mqtt.event_topic_template="eu868/gateway/{{ .GatewayID }}/event/{{ .EventType }}"' /tmp/chirpstack-gateway-bridge.toml
-    tomlq -it '.integration.mqtt.state_topic_template="eu868/gateway/{{ .GatewayID }}/state/{{ .StateType }}"' /tmp/chirpstack-gateway-bridge.toml
-    tomlq -it '.integration.mqtt.command_topic_template="eu868/gateway/{{ .GatewayID }}/command/#"' /tmp/chirpstack-gateway-bridge.toml
+    # Update topic templates to include us915_0 prefix to match ChirpStack expectations
+    tomlq -it '.integration.mqtt.event_topic_template="us915_0/gateway/{{ .GatewayID }}/event/{{ .EventType }}"' /tmp/chirpstack-gateway-bridge.toml
+    tomlq -it '.integration.mqtt.state_topic_template="us915_0/gateway/{{ .GatewayID }}/state/{{ .StateType }}"' /tmp/chirpstack-gateway-bridge.toml
+    tomlq -it '.integration.mqtt.command_topic_template="us915_0/gateway/{{ .GatewayID }}/command/#"' /tmp/chirpstack-gateway-bridge.toml
 
     # LOG LEVEL convert to number
     case "$gateway_bridge_log_level" in

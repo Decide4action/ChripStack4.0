@@ -50,7 +50,7 @@ integration:
 network:
   net_id: "000000"
 regions:
-  - "eu868"
+  - "us915_0"
 basic_station:
   enabled: true
   bind: "0.0.0.0:3001"
