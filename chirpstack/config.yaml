@@ -1,0 +1,104 @@
+name: "ChirpStack 4.0"
+description: "ChirpStack 4.15.0 LoRaWAN Network Server with SQLite and Gateway Bridge"
+version: "4.15.0"
+slug: "chirpstack"
+init: false
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+startup: system
+boot: auto
+hassio_api: true
+hassio_role: manager
+homeassistant_api: true
+host_network: true
+privileged:
+  - SYS_RAWIO
+devices:
+  - /dev/ttyUSB0
+  - /dev/ttyACM0
+  - /dev/ttyAMA0
+  - /dev/serial/by-id
+ports:
+  8080/tcp: 8080
+  1700/udp: 1700
+  3001/tcp: 3001
+ports_description:
+  8080/tcp: "ChirpStack Web Interface"
+  1700/udp: "Semtech UDP Packet Forwarder"
+  3001/tcp: "Basic Station WebSocket"
+map:
+  - share:rw
+  - config:rw
+options:
+  # =============================================================================
+  # MQTT Settings (shared by ChirpStack and Gateway Bridge)
+  # =============================================================================
+  mqtt:
+    server: "tcp://core-mosquitto:1883"
+    username: "chirpstack"
+    password: ""
+  
+  # =============================================================================
+  # ChirpStack Configuration
+  # =============================================================================
+  chirpstack:
+    log_level: info
+    api_bind: "0.0.0.0:8080"
+    api_secret: "you-must-replace-this"
+    network_id: "000000"
+    database_dsn: "sqlite:///config/chirpstack/chirpstack.db?mode=rwc"
+    integrations_enabled: "mqtt"
+    regions: |
+      [[regions]]
+      name="eu868"
+      common_name="EU868"
+    advanced_config: |
+      # Additional ChirpStack configuration
+      # Any TOML sections you want to add or override
+  
+  # =============================================================================
+  # Gateway Bridge Configuration  
+  # =============================================================================
+  gateway_bridge:
+    log_level: info
+    basic_station:
+      enabled: true
+      bind: "0.0.0.0:3001"
+    packet_forwarder:
+      enabled: true
+      bind: "0.0.0.0:1700"
+    advanced_config: |
+      # Additional Gateway Bridge configuration
+      # Any TOML sections you want to add or override
+schema:
+  # MQTT Settings Schema
+  mqtt:
+    server: str
+    username: str
+    password: password
+  
+  # ChirpStack Configuration Schema
+  chirpstack:
+    log_level: list(trace|debug|info|warn|error|fatal)?
+    api_bind: str?
+    api_secret: str?
+    network_id: str?
+    database_dsn: str?
+    integrations_enabled: str?
+    regions: str?
+    advanced_config: str?
+  
+  # Gateway Bridge Configuration Schema
+  gateway_bridge:
+    log_level: list(trace|debug|info|warn|error|fatal)?
+    basic_station:
+      enabled: bool?
+      bind: str?
+    packet_forwarder:
+      enabled: bool?
+      bind: str?
+    advanced_config: str?
